@@ -16,9 +16,8 @@ class SimulatedInterferometerClient(AbstractInterferometerClient):
         self._name = 'mySimulatedInterferometer'
 
     @override
-    def wavefront(self):
-        data = np.ones()
-        return np.ma.masked_array()
+    def wavefront(self, how_many=1):
+        return np.ma.ones((self.SIZE_H, self.SIZE_W))
 
     @override
     def snapshot(self, prefix):

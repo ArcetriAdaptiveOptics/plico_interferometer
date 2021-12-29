@@ -56,6 +56,6 @@ class InterferometerClient(AbstractInterferometerClient,
                   timeout_in_sec=Timeout.GETTER):
         self._logger.notice("getting wavefront (average %d)" % how_many)
         return self._rpcHandler.sendRequest(
-            self._requestSocket, 'home',
-            [],
+            self._requestSocket, 'wavefront',
+            [how_many],
             timeout=timeout_in_sec)
