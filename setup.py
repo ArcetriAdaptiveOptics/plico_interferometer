@@ -79,14 +79,6 @@ setup(name=NAME,
                 'plico_interferometer.types',
                 'plico_interferometer.utils',
                 ],
-      entry_points={
-          'gui_scripts': [
-              'plico_interferometer_gui=plico_interferometer.gui.plico_interferometer_gui:main',
-          ],
-      },
-      package_data={
-          'plico_interferometer': ['conf/plico_interferometer.conf'],
-      },
       install_requires=["plico>=0.18",
                         "numpy",
                         ],
