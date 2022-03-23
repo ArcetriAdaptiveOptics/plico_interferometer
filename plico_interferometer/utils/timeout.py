@@ -1,5 +1,5 @@
 
 
 class Timeout(object):
-    GETTER = 3.
+    GETTER = 10.
     SETTER = 10.
