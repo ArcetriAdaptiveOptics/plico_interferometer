@@ -23,3 +23,9 @@ def interferometer(hostname, port):
     zmqPorts = ZmqPorts(hostname, port)
     sockets = Sockets(zmqPorts, rpc)
     return InterferometerClient(rpc, sockets)
+
+def interferometer_4SightFocus_client(ippadd, port):
+    from plico_interferometer.client.interferometer_WCF_client import InterferometerWCFClient
+    
+    interferometer = InterferometerWCFClient(ippadd, port)
+    return interferometer
