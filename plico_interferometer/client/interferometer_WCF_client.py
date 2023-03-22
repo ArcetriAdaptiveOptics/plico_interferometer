@@ -65,7 +65,7 @@ class InterferometerWCFClient(AbstractInterferometerClient):
         return serial_number
 
     def snapshot(self, prefix='MY_4D'):
-        self._logger.notice("Getting snapshot for %s " % prefix)
+        self.logger.notice("Getting snapshot for %s " % prefix)
         serial_number = self._i4d.get_system_info()
         return prefix, serial_number
 
