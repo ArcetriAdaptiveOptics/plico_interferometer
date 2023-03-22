@@ -4,6 +4,7 @@ from plico_interferometer.devices.WCF_interface_for_4SightFocus import \
     WCFInterfacer
 from plico.utils.logger import Logger
 from plico.utils.decorator import override, returns
+import numpy as np
 
 class InterferometerWCFClient(AbstractInterferometerClient):
 
