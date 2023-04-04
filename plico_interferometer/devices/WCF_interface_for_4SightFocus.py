@@ -13,10 +13,18 @@ class WCFInterfacer():
         """ The constructor """
         self._ip = IP
         self._port = PORT
+        self._ping(self._ip)
 
         self._dataServiceAddress = 'http://%s:%i/DataService/' % (self._ip, self._port)
         self._systemServiceAddress = 'http://%s:%i/SystemService/' % (self._ip, self._port)
         self._frameBurstServiceAddress = 'http://%s:%i/FrameBurstService/' % (self._ip, self._port)
+
+    def _ping(self, host):
+        import platform
+        import subprocess
+        param = '-n' if platform.system().lower()=='windows' else '-c'
+        command = ['ping', param, '1', host]
+        return subprocess.call(command) == 0
 
     def _readJsonData(self, url, data=None):
         """
