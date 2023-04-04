@@ -44,7 +44,11 @@ class WCFInterfacer():
         else:
             req = url
         try:
-            response = urllib.request.urlopen(req)
+            try:
+                response = urllib.request.urlopen(req, timeout=5)
+            except urllib.request.HTTPError as error:
+                error_message = error.read().decode('utf-8')
+                raise
 
             response_contents = response.read()
             if response_contents != b'':
