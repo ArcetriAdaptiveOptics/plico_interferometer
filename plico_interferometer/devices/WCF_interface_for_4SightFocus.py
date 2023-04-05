@@ -13,7 +13,7 @@ class WCFInterfacer():
         """ The constructor """
         self._ip = IP
         self._port = PORT
-        self._ping(self._ip)
+        #self._ping(self._ip)
 
         self._dataServiceAddress = 'http://%s:%i/DataService/' % (self._ip, self._port)
         self._systemServiceAddress = 'http://%s:%i/SystemService/' % (self._ip, self._port)
@@ -24,7 +24,9 @@ class WCFInterfacer():
         import subprocess
         param = '-n' if platform.system().lower()=='windows' else '-c'
         command = ['ping', param, '1', host]
-        return subprocess.call(command) == 0
+        if subprocess.call(command) != 0:
+            raise HostNotFoundException('Interferometer PC did not ansewer to ping!')
+        
 
     def _readJsonData(self, url, data=None):
         """
@@ -54,9 +56,9 @@ class WCFInterfacer():
         try:
             try:
                 response = urllib.request.urlopen(req, timeout=5)
-            except urllib.request.HTTPError as error:
-                error_message = error.read().decode('utf-8')
-                raise
+            except urllib.request.URLError as error:
+                self._ping(self._ip)
+                raise Exception('Error = %s' %str(error))
 
             response_contents = response.read()
             if response_contents != b'':
@@ -402,3 +404,6 @@ class WCFInterfacer():
         url = '%s%s' % (self._frameBurstServiceAddress, 'BurstFramesToDisk')
         data = numberOfFrames
         self._readJsonData(url, data)
+
+class HostNotFoundException(Exception):
+    pass
