@@ -54,7 +54,7 @@ class InterferometerWCFClient(AbstractInterferometerClient):
                 masked_ima = self._fromDataArrayToMaskedArray(
                     width, height, data_array * 632.8e-9)
                 image_list.append(masked_ima)
-            images = np.dstack(image_list)
+            images = np.ma.dstack(image_list)
             masked_ima = np.ma.mean(images, axis=2)
 
         return masked_ima
