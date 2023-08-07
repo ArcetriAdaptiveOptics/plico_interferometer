@@ -59,3 +59,6 @@ class InterferometerClient(AbstractInterferometerClient,
             self._requestSocket, 'wavefront',
             [how_many],
             timeout=timeout_in_sec)
+
+    def ciao(self):
+        pass
