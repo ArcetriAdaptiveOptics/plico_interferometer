@@ -59,3 +59,14 @@ class InterferometerClient(AbstractInterferometerClient,
             self._requestSocket, 'wavefront',
             [how_many],
             timeout=timeout_in_sec)
+
+    @override
+    def acquire_burst(self,
+                  how_many=1,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting burst (average %d)" % how_many)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'acquire_burst',
+            [how_many],
+            timeout=timeout_in_sec)
+
