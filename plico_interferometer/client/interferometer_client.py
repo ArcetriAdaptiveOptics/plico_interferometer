@@ -70,3 +70,23 @@ class InterferometerClient(AbstractInterferometerClient,
             [how_many],
             timeout=timeout_in_sec)
 
+    @override
+    def load_burst(self,
+                  tracking_number,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting burst images from tn = %s" % tracking_number)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'load_burst',
+            [tracking_number],
+            timeout=timeout_in_sec)
+    
+    @override
+    def delete_burst(self,
+                  tracking_number,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("deleting burst images from tn = %s" % tracking_number)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'delete_burst',
+            [tracking_number],
+            timeout=timeout_in_sec)
+
