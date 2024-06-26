@@ -59,3 +59,42 @@ class InterferometerClient(AbstractInterferometerClient,
             self._requestSocket, 'wavefront',
             [how_many],
             timeout=timeout_in_sec)
+
+    @override
+    def acquire_burst(self,
+                  how_many=1,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting burst (average %d)" % how_many)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'acquire_burst',
+            [how_many],
+            timeout=timeout_in_sec)
+
+    @override
+    def load_burst(self,
+                  tracking_number,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting burst images from tn = %s" % tracking_number)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'load_burst',
+            [tracking_number],
+            timeout=timeout_in_sec)
+    
+    @override
+    def delete_burst(self,
+                  tracking_number,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("deleting burst images from tn = %s" % tracking_number)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'delete_burst',
+            [tracking_number],
+            timeout=timeout_in_sec)
+    
+    @override
+    def list_available_burst(self,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("list the available burst")
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'list_available_burst',
+            timeout=timeout_in_sec)
+
