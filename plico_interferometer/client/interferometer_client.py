@@ -89,4 +89,12 @@ class InterferometerClient(AbstractInterferometerClient,
             self._requestSocket, 'delete_burst',
             [tracking_number],
             timeout=timeout_in_sec)
+    
+    @override
+    def list_available_burst(self,
+                  timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("list the available burst")
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'list_available_burst',
+            timeout=timeout_in_sec)
 
