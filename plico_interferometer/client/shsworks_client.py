@@ -1,0 +1,102 @@
+from plico_interferometer.client.abstract_interferometer_client import \
+    AbstractInterferometerClient
+from plico.rpc.abstract_remote_procedure_call import \
+    AbstractRemoteProcedureCall
+from plico.utils.logger import Logger
+from plico.utils.decorator import override, returns
+from plico.utils.snapshotable import Snapshotable
+from plico.client.serverinfo_client import ServerInfoClient
+from plico.client.hackerable_client import HackerableClient
+from plico_interferometer.types.interferometer_status import \
+    InterferometerStatus
+from plico_interferometer.utils.timeout import Timeout
+
+
+class SHSClient(AbstractInterferometerClient,
+                HackerableClient,
+                ServerInfoClient):
+
+    def __init__(self,
+                 rpcHandler,
+                 sockets):
+        assert isinstance(rpcHandler, AbstractRemoteProcedureCall)
+        
+        self._rpcHandler = rpcHandler
+        self._requestSocket = sockets.serverRequest()
+        self._statusSocket = sockets.serverStatus()
+        self._logger = Logger.of('SHS client')
+        
+        HackerableClient.__init__(self,
+                                 self._rpcHandler,
+                                 self._requestSocket,
+                                 self._logger)
+        ServerInfoClient.__init__(self,
+                                 self._rpcHandler,
+                                 self._requestSocket,
+                                 self._logger)
+
+    @override
+    @returns(InterferometerStatus)
+    def status(self, timeout_in_sec=Timeout.GETTER):
+        return self._rpcHandler.receivePickable(
+            self._statusSocket,
+            timeout_in_sec)
+
+    @override
+    def snapshot(self, prefix, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("Getting snapshot for %s " % prefix)
+        status = self.status(timeout_in_sec=timeout_in_sec)
+        return Snapshotable.prepend(prefix, status.as_dict())
+
+    @override
+    def wavefront(self, how_many=1, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting wavefront (average %d)" % how_many)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'wavefront',
+            [how_many],
+            timeout=timeout_in_sec)
+
+    def get_field_stats(self, fieldId, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice(f"getting stats for field {fieldId}")
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'get_field_stats',
+            [fieldId],
+            timeout=timeout_in_sec)
+
+    @override
+    def acquire_burst(self, how_many=1, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting burst (average %d)" % how_many)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'acquire_burst',
+            [how_many],
+            timeout=timeout_in_sec)
+
+    @override
+    def load_burst(self, tracking_number, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting burst images from tn = %s" % tracking_number)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'load_burst',
+            [tracking_number],
+            timeout=timeout_in_sec)
+    
+    @override
+    def delete_burst(self, tracking_number, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("deleting burst images from tn = %s" % tracking_number)
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'delete_burst',
+            [tracking_number],
+            timeout=timeout_in_sec)
+    
+    @override
+    def list_available_burst(self, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("list the available burst")
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'list_available_burst',
+            timeout=timeout_in_sec)
+    
+    @override
+    def get_shsworks_version(self, timeout_in_sec=Timeout.GETTER):
+        self._logger.notice("getting SHSWorks version")
+        return self._rpcHandler.sendRequest(
+            self._requestSocket, 'get_shsworks_version',
+            timeout=timeout_in_sec)
