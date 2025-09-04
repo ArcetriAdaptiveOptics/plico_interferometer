@@ -1,3 +1,8 @@
+"""
+Authors
+    - Chiara Selmi: written in 2021
+"""
+
 import json
 import numpy as np
 import urllib
