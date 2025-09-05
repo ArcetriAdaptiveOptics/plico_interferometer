@@ -1,3 +1,4 @@
+import os
 from plico_interferometer.utils.constants import Constants
 
 
@@ -38,7 +39,11 @@ def interferometer(hostname, port):
     return InterferometerClient(rpc, sockets)
 
 
-def interferometer_4SightFocus_client(hostname, port):
+def interferometer_4SightFocus_client(hostname: str,
+                                      port: int,
+                                      data_path_on_4d_computer: os.PathLike=None,
+                                      data_path_on_local_computer: os.PathLike=None,
+):
     '''
     create client of 4SightFocus
 
@@ -53,5 +58,8 @@ def interferometer_4SightFocus_client(hostname, port):
     from plico_interferometer.client.interferometer_WCF_client import \
         InterferometerWCFClient
 
-    interferometer = InterferometerWCFClient(hostname, port)
+    interferometer = InterferometerWCFClient(hostname,
+                                             port,
+                                             data_path_on_4d_computer=data_path_on_4d_computer,
+                                             data_path_on_local_computer=data_path_on_local_computer)
     return interferometer

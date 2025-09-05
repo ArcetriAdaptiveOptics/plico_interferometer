@@ -95,10 +95,13 @@ class InterferometerWCFClient(AbstractInterferometerClient):
         Capture raw interferometer images on disk.
         Images are saved on the 4D compute disk
         '''
+        if how_many < 2:
+            raise ValueError('how_many must be minimum 2 frames')
+
         if self.data_path_on_4d_computer is None:
             raise ValueError('data_path_on_4d_computer has not been set')
         if tn is None:
-            tn = Timestamp.asNowString()
+            tn = Timestamp().asNowString()
         dest_folder = os.path.join(self.data_path_on_4d_computer, "capture", tn)
         self._i4d.burst_frames_to_specific_directory(dest_folder, how_many)
         return tn
@@ -107,7 +110,7 @@ class InterferometerWCFClient(AbstractInterferometerClient):
                 tn: os.PathLike,
                 as_masked_array: bool=True,
                 remove_after_produce: bool=True):
-        '''
+        r'''
         Convert captured raw images into wavefront measurements.
         This fuction needs a network mount of the 4D disk
         in order to access "produce_path_on_4d_computer", which is
@@ -140,9 +143,10 @@ class InterferometerWCFClient(AbstractInterferometerClient):
             local_path = self.data_path_on_4d_computer
         else:
             local_path = self.data_path_on_local_computer
+        self._i4d.set_timeout(60) # TODO should be a function of the number of images
         self._i4d.convert_raw_frames_in_directory_to_measurements_in_destination_directory(
-                os.path.join(self.data_path_on_4d_computer, "capture", tn),
                 os.path.join(self.data_path_on_4d_computer, "produce", tn),
+                os.path.join(self.data_path_on_4d_computer, "capture", tn),
             )
         filelist = glob.glob(os.path.join(local_path, "produce", tn, '*.4D'))
         images = []
@@ -202,11 +206,12 @@ def fromPhaseCam6110(i4dfilename: str,
     """
     with h5py.File(i4dfilename, "r") as ff:
         data = ff.get("/Measurement/SurfaceInWaves/Data")
-    if as_masked_array:
-        mask = np.invert(np.isfinite(data))
-        image = np.ma.masked_array(data * 632.8e-9, mask=mask)
-    else:
-        image = data
+        data = data[:]
+        if as_masked_array:
+            mask = np.invert(np.isfinite(data))
+            image = np.ma.masked_array(data * 632.8e-9, mask=mask)
+        else:
+            image = data
     return image
 
 def fromPhaseCamAutodetect(h5filename: str,

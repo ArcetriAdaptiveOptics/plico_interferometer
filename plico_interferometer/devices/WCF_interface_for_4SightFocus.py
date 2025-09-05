@@ -18,6 +18,13 @@ class WCFInterfacer():
         self._dataServiceAddress = 'http://%s:%i/DataService/' % (self._ip, self._port)
         self._systemServiceAddress = 'http://%s:%i/SystemService/' % (self._ip, self._port)
         self._frameBurstServiceAddress = 'http://%s:%i/FrameBurstService/' % (self._ip, self._port)
+        self._timeout = 10
+
+    def set_timeout(self, timeout):
+        self._timeout = timeout
+
+    def get_timeout(self):
+        return self._timeout
 
     def _ping(self, host):
         import platform
@@ -55,7 +62,7 @@ class WCFInterfacer():
             req = url
         try:
             try:
-                response = urllib.request.urlopen(req, timeout=5)
+                response = urllib.request.urlopen(req, timeout=self._timeout)
             except urllib.request.URLError as error:
                 self._ping(self._ip)
                 raise Exception('Error = %s' %str(error))
